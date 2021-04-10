@@ -212,6 +212,13 @@
           
           
           
+          <li><a href="/detekt/reporting.html">Reporting</a></li>
+          
+          
+          
+          
+          
+          
           <li><a href="/detekt/suppressing-rules.html">Suppressing Issues in Code</a></li>
           
           
@@ -227,6 +234,13 @@
           
           
           <li><a href="/detekt/extensions.html">Extending detekt</a></li>
+          
+          
+          
+          
+          
+          
+          <li><a href="/detekt/snapshots.html">Using snapshots</a></li>
           
           
           
@@ -436,7 +450,7 @@ $('#toc').on('click', 'a', function() {
 
     
 
-    <a target="_blank" href="https://github.com/detekt/detekt/tree/master/docs/pages/documentation/exceptions.md" class="btn btn-default githubEditButton" role="button"><i class="fa fa-github fa-lg"></i> Edit me</a>
+    <a target="_blank" href="https://github.com/detekt/detekt/tree/main/docs/pages/documentation/exceptions.md" class="btn btn-default githubEditButton" role="button"><i class="fa fa-github fa-lg"></i> Edit me</a>
 
     
 
@@ -451,6 +465,8 @@ $('#toc').on('click', 'a', function() {
 an exception it will be reported. By default this rule is checking for <code class="language-plaintext highlighter-rouge">toString</code>, <code class="language-plaintext highlighter-rouge">hashCode</code>, <code class="language-plaintext highlighter-rouge">equals</code> and
 <code class="language-plaintext highlighter-rouge">finalize</code>. This rule is configurable via the <code class="language-plaintext highlighter-rouge">methodNames</code> configuration to change the list of functions which
 should not throw any exceptions.</p>
+
+<p><strong>Active by default</strong>: Yes - Since v1.16.0</p>
 
 <p><strong>Debt</strong>: 20min</p>
 
@@ -479,6 +495,8 @@ should not throw any exceptions.</p>
 <p>This rule reports <code class="language-plaintext highlighter-rouge">catch</code> blocks which check for the type of an exception via <code class="language-plaintext highlighter-rouge">is</code> checks or casts.
 Instead of catching generic exception types and then checking for specific exception types the code should
 use multiple catch blocks. These catch blocks should then catch the specific exceptions.</p>
+
+<p><strong>Active by default</strong>: No</p>
 
 <p><strong>Debt</strong>: 20min</p>
 
@@ -510,6 +528,8 @@ functions.
 These indicate that functionality is still under development and will not work properly. Both of these should only
 serve as temporary declarations and should not be put into production environments.</p>
 
+<p><strong>Active by default</strong>: No</p>
+
 <p><strong>Debt</strong>: 20min</p>
 
 <h4 id="noncompliant-code-2">Noncompliant Code:</h4>
@@ -523,14 +543,50 @@ serve as temporary declarations and should not be put into production environmen
 <span class="p">}</span>
 </code></pre></div></div>
 
+<h3 id="objectextendsthrowable">ObjectExtendsThrowable</h3>
+
+<p>This rule reports all <code class="language-plaintext highlighter-rouge">objects</code> including <code class="language-plaintext highlighter-rouge">companion objects</code> that extend any type of
+<code class="language-plaintext highlighter-rouge">Throwable</code>. Throwable instances are not intended for reuse as they are stateful and contain
+mutable information about a specific exception or error. Hence, global singleton <code class="language-plaintext highlighter-rouge">Throwables</code>
+should be avoided.</p>
+
+<p>See https://kotlinlang.org/docs/reference/object-declarations.html#object-declarations
+See https://kotlinlang.org/docs/reference/object-declarations.html#companion-objects</p>
+
+<p><strong>Active by default</strong>: No</p>
+
+<p><strong>Requires Type Resolution</strong></p>
+
+<p><strong>Debt</strong>: 10min</p>
+
+<h4 id="noncompliant-code-3">Noncompliant Code:</h4>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">object</span> <span class="nc">InvalidCredentialsException</span> <span class="p">:</span> <span class="nc">Throwable</span><span class="p">()</span>
+
+<span class="kd">object</span> <span class="nc">BanException</span> <span class="p">:</span> <span class="nc">Exception</span><span class="p">()</span>
+
+<span class="kd">object</span> <span class="nc">AuthException</span> <span class="p">:</span> <span class="nc">RuntimeException</span><span class="p">()</span>
+</code></pre></div></div>
+
+<h4 id="compliant-code-1">Compliant Code:</h4>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">InvalidCredentialsException</span> <span class="p">:</span> <span class="nc">Throwable</span><span class="p">()</span>
+
+<span class="kd">class</span> <span class="nc">BanException</span> <span class="p">:</span> <span class="nc">Exception</span><span class="p">()</span>
+
+<span class="kd">class</span> <span class="nc">AuthException</span> <span class="p">:</span> <span class="nc">RuntimeException</span><span class="p">()</span>
+</code></pre></div></div>
+
 <h3 id="printstacktrace">PrintStackTrace</h3>
 
 <p>This rule reports code that tries to print the stacktrace of an exception. Instead of simply printing a stacktrace
 a better logging solution should be used.</p>
 
+<p><strong>Active by default</strong>: Yes - Since v1.16.0</p>
+
 <p><strong>Debt</strong>: 20min</p>
 
-<h4 id="noncompliant-code-3">Noncompliant Code:</h4>
+<h4 id="noncompliant-code-4">Noncompliant Code:</h4>
 
 <div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">fun</span> <span class="nf">foo</span><span class="p">()</span> <span class="p">{</span>
     <span class="nc">Thread</span><span class="p">.</span><span class="nf">dumpStack</span><span class="p">()</span>
@@ -545,7 +601,7 @@ a better logging solution should be used.</p>
 <span class="p">}</span>
 </code></pre></div></div>
 
-<h4 id="compliant-code-1">Compliant Code:</h4>
+<h4 id="compliant-code-2">Compliant Code:</h4>
 
 <div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">val</span> <span class="py">LOGGER</span> <span class="p">=</span> <span class="nc">Logger</span><span class="p">.</span><span class="nf">getLogger</span><span class="p">()</span>
 
@@ -563,9 +619,11 @@ a better logging solution should be used.</p>
 <p>This rule reports all exceptions that are caught and then later re-thrown without modification.
 It ignores caught exceptions that are rethrown if there is work done before that.</p>
 
+<p><strong>Active by default</strong>: Yes - Since v1.16.0</p>
+
 <p><strong>Debt</strong>: 5min</p>
 
-<h4 id="noncompliant-code-4">Noncompliant Code:</h4>
+<h4 id="noncompliant-code-5">Noncompliant Code:</h4>
 
 <div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">fun</span> <span class="nf">foo</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">try</span> <span class="p">{</span>
@@ -576,7 +634,7 @@ It ignores caught exceptions that are rethrown if there is work done before that
 <span class="p">}</span>
 </code></pre></div></div>
 
-<h4 id="compliant-code-2">Compliant Code:</h4>
+<h4 id="compliant-code-3">Compliant Code:</h4>
 
 <div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">fun</span> <span class="nf">foo</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">try</span> <span class="p">{</span>
@@ -605,6 +663,8 @@ It ignores caught exceptions that are rethrown if there is work done before that
 Using <code class="language-plaintext highlighter-rouge">return</code> statements in <code class="language-plaintext highlighter-rouge">finally</code> blocks can discard and hide exceptions that are thrown in the <code class="language-plaintext highlighter-rouge">try</code> block.
 Furthermore, this rule reports values from <code class="language-plaintext highlighter-rouge">finally</code> blocks, if the corresponding <code class="language-plaintext highlighter-rouge">try</code> is used as an expression.</p>
 
+<p><strong>Active by default</strong>: Yes - Since v1.16.0</p>
+
 <p><strong>Requires Type Resolution</strong></p>
 
 <p><strong>Debt</strong>: 20min</p>
@@ -619,7 +679,7 @@ Furthermore, this rule reports values from <code class="language-plaintext highl
   </li>
 </ul>
 
-<h4 id="noncompliant-code-5">Noncompliant Code:</h4>
+<h4 id="noncompliant-code-6">Noncompliant Code:</h4>
 
 <div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">fun</span> <span class="nf">foo</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">try</span> <span class="p">{</span>
@@ -635,21 +695,24 @@ Furthermore, this rule reports values from <code class="language-plaintext highl
 <h3 id="swallowedexception">SwallowedException</h3>
 
 <p>Exceptions should not be swallowed. This rule reports all instances where exceptions are <code class="language-plaintext highlighter-rouge">caught</code> and not correctly
-passed into a newly thrown exception.</p>
+passed (e.g. as a cause) into a newly thrown exception.</p>
+
+<p>The exception types configured in <code class="language-plaintext highlighter-rouge">ignoredExceptionTypes</code> indicate nonexceptional outcomes.
+These by default configured exception types are part of Java.
+Therefore, Kotlin developers have to handle them by using the catch clause.
+For that reason, this rule ignores that these configured exception types are caught.</p>
+
+<p><strong>Active by default</strong>: Yes - Since v1.16.0</p>
 
 <p><strong>Debt</strong>: 20min</p>
 
 <h4 id="configuration-options-2">Configuration options:</h4>
 
 <ul>
-  <li><code class="language-plaintext highlighter-rouge">ignoredExceptionTypes</code> (default: ``- InterruptedException
-    <ul>
-      <li>NumberFormatException</li>
-      <li>ParseException</li>
-      <li>MalformedURLException``)</li>
-    </ul>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">ignoredExceptionTypes</code> (default: <code class="language-plaintext highlighter-rouge">InterruptedException, NumberFormatException, ParseException, MalformedURLException</code>)</p>
 
-    <p>exception types which should be ignored by this rule</p>
+    <p>exception types which should be ignored (both in the catch clause and body)</p>
   </li>
   <li>
     <p><code class="language-plaintext highlighter-rouge">allowedExceptionNameRegex</code> (default: <code class="language-plaintext highlighter-rouge">'_|(ignore|expected).*'</code>)</p>
@@ -658,7 +721,7 @@ passed into a newly thrown exception.</p>
   </li>
 </ul>
 
-<h4 id="noncompliant-code-6">Noncompliant Code:</h4>
+<h4 id="noncompliant-code-7">Noncompliant Code:</h4>
 
 <div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">fun</span> <span class="nf">foo</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">try</span> <span class="p">{</span>
@@ -679,7 +742,7 @@ passed into a newly thrown exception.</p>
 <span class="p">}</span>
 </code></pre></div></div>
 
-<h4 id="compliant-code-3">Compliant Code:</h4>
+<h4 id="compliant-code-4">Compliant Code:</h4>
 
 <div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">fun</span> <span class="nf">foo</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">try</span> <span class="p">{</span>
@@ -700,9 +763,11 @@ passed into a newly thrown exception.</p>
 <p>This rule reports all cases where exceptions are thrown from a <code class="language-plaintext highlighter-rouge">finally</code> block. Throwing exceptions from a <code class="language-plaintext highlighter-rouge">finally</code>
 block should be avoided as it can lead to confusion and discarded exceptions.</p>
 
+<p><strong>Active by default</strong>: Yes - Since v1.16.0</p>
+
 <p><strong>Debt</strong>: 20min</p>
 
-<h4 id="noncompliant-code-7">Noncompliant Code:</h4>
+<h4 id="noncompliant-code-8">Noncompliant Code:</h4>
 
 <div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">fun</span> <span class="nf">foo</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">try</span> <span class="p">{</span>
@@ -718,9 +783,11 @@ block should be avoided as it can lead to confusion and discarded exceptions.</p
 <p>This rule reports all exceptions that are thrown in a <code class="language-plaintext highlighter-rouge">main</code> method.
 An exception should only be thrown if it can be handled by a “higher” function.</p>
 
+<p><strong>Active by default</strong>: No</p>
+
 <p><strong>Debt</strong>: 20min</p>
 
-<h4 id="noncompliant-code-8">Noncompliant Code:</h4>
+<h4 id="noncompliant-code-9">Noncompliant Code:</h4>
 
 <div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">fun</span> <span class="nf">main</span><span class="p">(</span><span class="n">args</span><span class="p">:</span> <span class="nc">Array</span><span class="p">&lt;</span><span class="nc">String</span><span class="p">&gt;)</span> <span class="p">{</span>
     <span class="c1">// ...</span>
@@ -735,22 +802,21 @@ Exceptions should always call one of the constructor overloads to provide a mess
 Exceptions should be meaningful and contain as much detail about the error case as possible. This will help to track
 down an underlying issue in a better way.</p>
 
+<p><strong>Active by default</strong>: Yes - Since v1.16.0</p>
+
 <p><strong>Debt</strong>: 5min</p>
 
 <h4 id="configuration-options-3">Configuration options:</h4>
 
 <ul>
-  <li><code class="language-plaintext highlighter-rouge">exceptions</code> (default: ``- IllegalArgumentException
-    <ul>
-      <li>IllegalStateException</li>
-      <li>IOException``)</li>
-    </ul>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">exceptions</code> (default: <code class="language-plaintext highlighter-rouge">IllegalArgumentException, IllegalStateException, IOException</code>)</p>
 
     <p>exceptions which should not be thrown without message or cause</p>
   </li>
 </ul>
 
-<h4 id="noncompliant-code-9">Noncompliant Code:</h4>
+<h4 id="noncompliant-code-10">Noncompliant Code:</h4>
 
 <div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">fun</span> <span class="nf">foo</span><span class="p">(</span><span class="n">bar</span><span class="p">:</span> <span class="nc">Int</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">bar</span> <span class="p">&lt;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
@@ -760,7 +826,7 @@ down an underlying issue in a better way.</p>
 <span class="p">}</span>
 </code></pre></div></div>
 
-<h4 id="compliant-code-4">Compliant Code:</h4>
+<h4 id="compliant-code-5">Compliant Code:</h4>
 
 <div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">fun</span> <span class="nf">foo</span><span class="p">(</span><span class="n">bar</span><span class="p">:</span> <span class="nc">Int</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">bar</span> <span class="p">&lt;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
@@ -775,9 +841,11 @@ down an underlying issue in a better way.</p>
 <p>Exceptions should not be wrapped inside the same exception type and then rethrown. Prefer wrapping exceptions in more
 meaningful exception types.</p>
 
+<p><strong>Active by default</strong>: Yes - Since v1.16.0</p>
+
 <p><strong>Debt</strong>: 5min</p>
 
-<h4 id="noncompliant-code-10">Noncompliant Code:</h4>
+<h4 id="noncompliant-code-11">Noncompliant Code:</h4>
 
 <div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">fun</span> <span class="nf">foo</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">try</span> <span class="p">{</span>
@@ -788,7 +856,7 @@ meaningful exception types.</p>
 <span class="p">}</span>
 </code></pre></div></div>
 
-<h4 id="compliant-code-5">Compliant Code:</h4>
+<h4 id="compliant-code-6">Compliant Code:</h4>
 
 <div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">fun</span> <span class="nf">foo</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">try</span> <span class="p">{</span>
@@ -805,21 +873,15 @@ meaningful exception types.</p>
 It should be preferred to catch specific exceptions to the case that is currently handled. If the scope of the caught
 exception is too broad it can lead to unintended exceptions being caught.</p>
 
+<p><strong>Active by default</strong>: Yes - Since v1.0.0</p>
+
 <p><strong>Debt</strong>: 20min</p>
 
 <h4 id="configuration-options-4">Configuration options:</h4>
 
 <ul>
-  <li><code class="language-plaintext highlighter-rouge">exceptionNames</code> (default: ``- ArrayIndexOutOfBoundsException
-    <ul>
-      <li>Error</li>
-      <li>Exception</li>
-      <li>IllegalMonitorStateException</li>
-      <li>NullPointerException</li>
-      <li>IndexOutOfBoundsException</li>
-      <li>RuntimeException</li>
-      <li>Throwable``)</li>
-    </ul>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">exceptionNames</code> (default: <code class="language-plaintext highlighter-rouge">ArrayIndexOutOfBoundsException, Error, Exception, IllegalMonitorStateException, NullPointerException, IndexOutOfBoundsException, RuntimeException, Throwable</code>)</p>
 
     <p>exceptions which are too generic and should not be caught</p>
   </li>
@@ -830,7 +892,7 @@ exception is too broad it can lead to unintended exceptions being caught.</p>
   </li>
 </ul>
 
-<h4 id="noncompliant-code-11">Noncompliant Code:</h4>
+<h4 id="noncompliant-code-12">Noncompliant Code:</h4>
 
 <div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">fun</span> <span class="nf">foo</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">try</span> <span class="p">{</span>
@@ -839,7 +901,7 @@ exception is too broad it can lead to unintended exceptions being caught.</p>
 <span class="p">}</span>
 </code></pre></div></div>
 
-<h4 id="compliant-code-6">Compliant Code:</h4>
+<h4 id="compliant-code-7">Compliant Code:</h4>
 
 <div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">fun</span> <span class="nf">foo</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">try</span> <span class="p">{</span>
@@ -853,23 +915,21 @@ exception is too broad it can lead to unintended exceptions being caught.</p>
 <p>This rule reports thrown exceptions that have a type that is too generic. It should be preferred to throw specific
 exceptions to the case that has currently occurred.</p>
 
+<p><strong>Active by default</strong>: Yes - Since v1.0.0</p>
+
 <p><strong>Debt</strong>: 20min</p>
 
 <h4 id="configuration-options-5">Configuration options:</h4>
 
 <ul>
-  <li><code class="language-plaintext highlighter-rouge">exceptionNames</code> (default: ``- Error
-    <ul>
-      <li>Exception</li>
-      <li>Throwable</li>
-      <li>RuntimeException``)</li>
-    </ul>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">exceptionNames</code> (default: <code class="language-plaintext highlighter-rouge">Error, Exception, Throwable, RuntimeException</code>)</p>
 
     <p>exceptions which are too generic and should not be thrown</p>
   </li>
 </ul>
 
-<h4 id="noncompliant-code-12">Noncompliant Code:</h4>
+<h4 id="noncompliant-code-13">Noncompliant Code:</h4>
 
 <div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">fun</span> <span class="nf">foo</span><span class="p">(</span><span class="n">bar</span><span class="p">:</span> <span class="nc">Int</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">bar</span> <span class="p">&lt;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
@@ -879,7 +939,7 @@ exceptions to the case that has currently occurred.</p>
 <span class="p">}</span>
 </code></pre></div></div>
 
-<h4 id="compliant-code-7">Compliant Code:</h4>
+<h4 id="compliant-code-8">Compliant Code:</h4>
 
 <div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">fun</span> <span class="nf">foo</span><span class="p">(</span><span class="n">bar</span><span class="p">:</span> <span class="nc">Int</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">bar</span> <span class="p">&lt;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
@@ -905,7 +965,7 @@ exceptions to the case that has currently occurred.</p>
             <div class="row">
                 <div class="col-lg-12 footer">
                &copy;2021 The detekt Team. All rights reserved. <br />
- Site last generated: Jan 18, 2021 <br />
+ Site last generated: Apr 10, 2021 <br />
                 </div>
             </div>
 </footer>
